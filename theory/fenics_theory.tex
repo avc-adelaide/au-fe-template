@@ -14,7 +14,8 @@
 \usepackage{mathtools}
 
 % Page geometry
-\geometry{a5paper,margin=2cm}
+\geometry{halfletter,margin=5mm}
+% strange page design to optimise for phone (or small on-screen window) reading
 
 % Hyperref setup
 \hypersetup{
@@ -443,6 +444,19 @@ solution may exist.
  
 \subsubsection{Deriving the Weak Form}
 
+To derive the weak form, we want to relax the pointwise requirement on $u$. 
+The idea is to instead require the equation to hold \emph{on average} against 
+all functions in some suitable test space. We multiply both sides by an 
+arbitrary \emph{test function} $v$ and integrate over $\domain$ --- if the 
+equation holds for all such $v$, it captures the same information as the 
+pointwise statement, but under weaker assumptions on $u$.
+
+In practice, when the domain is discretised into a mesh, the test functions 
+are typically low-order polynomials --- often piecewise linear or quadratic 
+--- defined on each element. The global space $V_0$ is then approximated by 
+a finite-dimensional subspace spanned by these local polynomial pieces, 
+sewn together with appropriate continuity conditions at element boundaries.
+
 Multiply~\eqref{eq:poisson-strong} by a \emph{test function}
 $v \in V_0 = H^1_0(\domain)$ and integrate over $\domain$:
 \begin{equation*}
@@ -461,8 +475,8 @@ The \textbf{weak formulation} of~\eqref{eq:poisson-strong} then reads:
 
 \begin{equation}
   \label{eq:poisson-weak}
-  \text{Find } u \in V \text{ such that }
-  a(u, v) = L(v) \quad \forall v \in V,
+  \text{Find } u \in V_0 \text{ such that }
+  a(u, v) = L(v) \quad \forall v \in V_0,
 \end{equation}
 where the \emph{bilinear form} $a$ and the \emph{linear form} $L$ are defined
 as
@@ -503,8 +517,8 @@ by the mesh, element family, and polynomial degree.
 \subsection{The Galerkin Finite Element Method}
 
 The Galerkin method converts the infinite-dimensional problem~\eqref{eq:poisson-weak}
-into a finite-dimensional approximation by replacing $V$ with a finite-dimensional
-subspace $V_h \subset V$.
+into a finite-dimensional approximation by replacing $V_0$ with a finite-dimensional
+subspace $V_h \subset V_0$.
 
 \subsubsection{Mesh and Triangulation}
 
