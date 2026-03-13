@@ -522,7 +522,10 @@ by the mesh, element family, and polynomial degree.
 
 The Galerkin method converts the infinite-dimensional problem~\eqref{eq:poisson-weak}
 into a finite-dimensional approximation by replacing $V_0$ with a finite-dimensional
-subspace $V_h \subset V_0$.
+subspace $V_h \subset V_0$. In other words, rather than seeking a solution over
+the full infinite-dimensional space $V_0$, we instead seek an approximation
+expressed as a linear combination of a finite set of basis functions that span $V_h$.
+
 
 \subsubsection{Mesh and Triangulation}
 
@@ -547,14 +550,13 @@ $V_{h,0} = V_h \cap H^1_0(\domain)$.
 
 \subsubsection{Discrete Variational Problem}
 
-Replacing $V$ by $V_h$ in~\eqref{eq:poisson-weak} gives the
+Replacing $V_0$ by $V_h$ in~\eqref{eq:poisson-weak} gives the
 \emph{discrete variational problem}:
 \begin{equation}
   \label{eq:discrete}
   \text{Find } u_h \in V_h \text{ such that }
   a(u_h, v_h) = L(v_h) \quad \forall v_h \in V_h.
 \end{equation}
-
 Writing $u_h = \sum_{j=1}^N U_j \phi_j$ in terms of the nodal basis
 $\{\phi_j\}_{j=1}^N$ of $V_h$, problem~\eqref{eq:discrete} becomes the
 linear system
