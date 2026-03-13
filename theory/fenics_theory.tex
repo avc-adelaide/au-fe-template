@@ -1,3 +1,4 @@
+\DocumentMetadata{}
 \documentclass[11pt]{article}
 
 % Packages
@@ -11,7 +12,7 @@
 \usepackage{graphicx}
 \usepackage{booktabs}
 \usepackage{enumitem}
-\usepackage{mathtools}
+\usepackage{varioref}
 
 % Page geometry
 \geometry{paperwidth=120mm, paperheight=210mm,margin=5mm}
@@ -444,7 +445,7 @@ solution may exist.
  
 \subsubsection{Deriving the Weak Form}
 
-To derive the weak form, we want to relax the pointwise requirement on $u$. 
+We want to relax the pointwise requirement on $u$. 
 The idea is to instead require the equation to hold \emph{on average} against 
 all functions in some suitable test space. We multiply both sides by an 
 arbitrary \emph{test function} $v$ and integrate over $\domain$ --- if the 
@@ -457,8 +458,8 @@ are typically low-order polynomials --- often piecewise linear or quadratic
 a finite-dimensional subspace spanned by these local polynomial pieces, 
 sewn together with appropriate continuity conditions at element boundaries.
 
-Multiply~\eqref{eq:poisson-strong} by a \emph{test function}
-$v \in V_0 = H^1_0(\domain)$ and integrate over $\domain$:
+To derive the weak form, multiply~\eqref{eq:poisson-strong} by a \emph{test function}
+$v \in V_0 = H^1_0(\domain)$ (see Def.\,\vref{def:H10}) and integrate over the domain $\domain$:
 \begin{equation*}
   -\int_\domain \Lapl u\, v \dx = \int_\domain f\, v \dx.
 \end{equation*}
@@ -510,6 +511,7 @@ $\norm{v}_{H^1}^2 = \norm{v}_{L^2}^2 + \norm{\nabla v}_{L^2}^2$.
 \end{definition}
 
 \begin{definition}[Homogeneous Dirichlet Space $H^1_0$]
+\label{def:H10}
 $H^1_0(\domain)$ is the subspace of $H^1(\domain)$ whose elements satisfy
 $v = 0$ on $\boundary$ in the trace sense.
 \end{definition}
