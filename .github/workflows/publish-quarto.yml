@@ -34,7 +34,7 @@ jobs:
       - name: Download PDF artifact
         uses: actions/download-artifact@v4
         with:
-          name: fenics_theory_pdf
+          name: fenics_theory.pdf
           path: theory
 
       # ── Quarto document ───────────────────────────────────────────────────
