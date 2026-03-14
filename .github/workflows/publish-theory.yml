@@ -25,3 +25,9 @@ jobs:
         with:
           root_file: fenics_theory.tex
           working_directory: theory
+
+      - name: Upload PDF artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: fenics_theory_pdf
+          path: theory/fenics_theory.pdf
