@@ -30,15 +30,12 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      # ── Theory PDF ────────────────────────────────────────────────────────
-      - name: Install MacTeX
-        run: brew install --cask mactex-no-gui
-
-      - name: Compile fenics_theory.tex to PDF
-        uses: xu-cheng/latex-action@v3
+      # Download PDF from LaTeX workflow
+      - name: Download PDF artifact
+        uses: actions/download-artifact@v3
         with:
-          root_file: fenics_theory.tex
-          working_directory: theory
+          name: fenics_theory_pdf
+          path: theory
 
       # ── Quarto document ───────────────────────────────────────────────────
 
