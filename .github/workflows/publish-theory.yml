@@ -29,5 +29,5 @@ jobs:
       - name: Upload PDF artifact
         uses: actions/upload-artifact@v4
         with:
-          name: fenics_theory_pdf
-          path: theory/fenics_theory.pdf
+          name: fenics_theory.pdf
+          path: theory
