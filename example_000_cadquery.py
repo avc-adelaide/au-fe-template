@@ -1,4 +1,6 @@
+print("cadquery example")
 import cadquery as cq
+print("cadquery loaded")
 
 # Parameters
 length = 120      # mm
@@ -18,5 +20,12 @@ plate = (
     .hole(hole_d)
 )
 
-cq.exporters.export(plate, "plate.step")
+print("Geometry defined")
+
+cq.exporters.export(plate, "results/plate.step")
+
+print("Step file exported")
+
 cq.exporters.export(plate, "results/plate.stl")
+
+print("STL file exported")
