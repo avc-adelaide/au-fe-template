@@ -48,12 +48,20 @@ You can then delete all of the installed files and start from fresh using
 make uninstall
 ```
 
-## Theory Document
+## Published Documents
+
+Both documents below are automatically built and published to **[GitHub Pages](https://avc-adelaide.github.io/finite-element-toolkit/)** on every push to `main`.
+
+[![Publish Quarto Example and Theory Document](https://github.com/avc-adelaide/finite-element-toolkit/actions/workflows/publish-quarto.yml/badge.svg)](https://github.com/avc-adelaide/finite-element-toolkit/actions/workflows/publish-quarto.yml)
+
+### Theory Document
 
 A didactic introduction to the Finite Element Method (FEM) and its implementation in FEniCSx is available in the [`theory/`](theory/) folder.
 
-The document is automatically compiled and published to GitHub Pages on every push to `main`:
+**[View / Download PDF](https://avc-adelaide.github.io/finite-element-toolkit/fenics_theory.pdf)**
 
-**[View / Download PDF](https://avc-adelaide.github.io/au-fe-template/fenics_theory.pdf)**
+### Quarto Example
 
-[![Compile and Publish Theory Document](https://github.com/avc-adelaide/au-fe-template/actions/workflows/publish-theory.yml/badge.svg)](https://github.com/avc-adelaide/au-fe-template/actions/workflows/publish-theory.yml)
+A hands-on walkthrough of a 1-D Poisson problem solved with pure NumPy (no FEM library required) is in the [`quarto/`](quarto/) folder.  The document includes code, maths, and a plot, and is rendered via [Quarto](https://quarto.org).
+
+**[View Quarto document](https://avc-adelaide.github.io/finite-element-toolkit/quarto/)**

@@ -1,0 +1,141 @@
+name: Publish Quarto Example and Theory Document
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'quarto/**'
+      - 'theory/**'
+      - '.github/workflows/publish-quarto.yml'
+  workflow_dispatch:
+
+# Minimum permissions for Pages deployment
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# One deployment at a time; cancel in-progress runs if a new one starts
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  build:
+    name: Build site
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # ── Theory PDF ────────────────────────────────────────────────────────
+      - name: Compile fenics_theory.tex to PDF
+        uses: xu-cheng/latex-action@v3
+        with:
+          root_file: fenics_theory.tex
+          working_directory: theory
+
+      # ── Quarto document ───────────────────────────────────────────────────
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+
+      - name: Install Python dependencies
+        run: pip install numpy matplotlib
+
+      - name: Set up Quarto
+        uses: quarto-dev/quarto-actions/setup@v2
+
+      - name: Render Quarto document
+        run: quarto render quarto/example.qmd --to html
+
+      # ── Assemble site ─────────────────────────────────────────────────────
+      - name: Build GitHub Pages site
+        run: |
+          mkdir -p _site/quarto
+          cp theory/fenics_theory.pdf _site/
+          cp quarto/example.html _site/quarto/index.html
+
+          cat > _site/index.html << 'HTML'
+          <!DOCTYPE html>
+          <html lang="en">
+          <head>
+            <meta charset="UTF-8" />
+            <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+            <title>Finite Element Toolkit</title>
+            <style>
+              body {
+                font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+                max-width: 700px;
+                margin: 4rem auto;
+                padding: 0 1.5rem;
+                color: #24292f;
+              }
+              h1 { font-size: 1.8rem; margin-bottom: 0.4rem; }
+              h2 { font-size: 1.2rem; margin: 2rem 0 0.5rem; color: #57606a; }
+              p  { color: #57606a; margin-top: 0.25rem; }
+              .btn {
+                display: inline-block;
+                margin-top: 0.75rem;
+                padding: 0.55rem 1.2rem;
+                background: #0969da;
+                color: #fff;
+                border-radius: 6px;
+                text-decoration: none;
+                font-weight: 600;
+                font-size: 0.95rem;
+              }
+              .btn:hover { background: #0550ae; }
+              .card {
+                border: 1px solid #d0d7de;
+                border-radius: 8px;
+                padding: 1.2rem 1.4rem;
+                margin-top: 1rem;
+              }
+            </style>
+          </head>
+          <body>
+            <h1>Finite Element Toolkit</h1>
+            <p>Resources published from the
+               <a href="https://github.com/avc-adelaide/finite-element-toolkit">avc-adelaide/finite-element-toolkit</a>
+               repository.</p>
+
+            <h2>Documents</h2>
+
+            <div class="card">
+              <strong>FEniCSx Theory Document</strong>
+              <p>A didactic introduction to the Finite Element Method and its implementation in FEniCSx.</p>
+              <a class="btn" href="fenics_theory.pdf">Open PDF ↗</a>
+            </div>
+
+            <div class="card">
+              <strong>Quick-start FEM Example (Quarto)</strong>
+              <p>A hands-on walkthrough of a 1-D Poisson problem solved with pure NumPy, with plots.</p>
+              <a class="btn" href="quarto/">View document ↗</a>
+            </div>
+          </body>
+          </html>
+          HTML
+
+      - name: Configure GitHub Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: _site
+
+  deploy:
+    name: Deploy to GitHub Pages
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4

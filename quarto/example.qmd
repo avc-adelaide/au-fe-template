@@ -1,0 +1,127 @@
+---
+title: "Finite Element Method – Quick-start Example"
+format:
+  html:
+    toc: true
+    code-fold: false
+    theme: cosmo
+    embed-resources: true
+execute:
+  echo: true
+---
+
+## Introduction
+
+This document provides a self-contained, code-first introduction to the core
+ideas of the Finite Element Method (FEM) using only **NumPy**.  No external FEM
+library is required – the goal is to make every step explicit and easy to follow.
+
+We solve the 1-D Poisson problem
+
+$$-u''(x) = f(x), \qquad x \in [0, 1], \qquad u(0) = 0,\; u(1) = 1,$$
+
+with a uniform body force $f = 1$.  The exact solution is
+
+$$u(x) = x + \tfrac{1}{2}(x - x^2).$$
+
+---
+
+## 1 · Build a Uniform Mesh
+
+Represent the mesh as an array of node coordinates and an element-connectivity
+table.
+
+```{python}
+import numpy as np
+
+# 5 equal elements → 6 nodes on [0, 1]
+n_nodes    = 6
+n_elements = n_nodes - 1
+nodes      = np.linspace(0, 1, n_nodes)
+elements   = np.array([[i, i + 1] for i in range(n_elements)])
+
+print("Node coordinates :", nodes)
+print("Element connectivity:\n", elements)
+```
+
+## 2 · Assemble the Global Stiffness Matrix
+
+Each linear element of length $h$ contributes the local stiffness matrix
+
+$$k^e = \frac{1}{h}\begin{pmatrix} 1 & -1 \\ -1 & 1 \end{pmatrix}.$$
+
+```{python}
+def assemble_stiffness(nodes, elements):
+    n = len(nodes)
+    K = np.zeros((n, n))
+    for el in elements:
+        i, j = el
+        h = nodes[j] - nodes[i]
+        # k^e_{ab} = ∫ φ'_a φ'_b dx over the element (weak-form Galerkin)
+        ke = np.array([[1, -1], [-1, 1]]) / h
+        K[np.ix_([i, j], [i, j])] += ke
+    return K
+
+K = assemble_stiffness(nodes, elements)
+print("Global stiffness matrix K:\n", np.round(K, 3))
+```
+
+## 3 · Apply Dirichlet Boundary Conditions and Solve
+
+Enforce $u(0) = 0$ and $u(1) = 1$ by static condensation (row/column
+elimination on the free degrees of freedom).
+
+```{python}
+# Uniform load vector
+f = np.ones(n_nodes)
+
+# Free DOFs (interior nodes only)
+free = list(range(1, n_nodes - 1))
+bc_vals = np.array([0.0, 1.0])          # u at nodes 0 and n-1
+
+K_red = K[np.ix_(free, free)]
+f_red = f[free] - K[np.ix_(free, [0, -1])] @ bc_vals
+
+# Solve the reduced system
+u = np.zeros(n_nodes)
+u[0], u[-1] = bc_vals
+u[free] = np.linalg.solve(K_red, f_red)
+
+print("FEM solution  u :", np.round(u, 6))
+```
+
+## 4 · Compare Against the Analytical Solution
+
+```{python}
+x           = nodes
+u_exact     = x + 0.5 * (x - x**2)
+max_error   = np.max(np.abs(u - u_exact))
+
+print("Analytical u_exact :", np.round(u_exact, 6))
+print(f"Max nodal error    : {max_error:.2e}")
+```
+
+For linear elements on a uniform mesh the FEM solution is *exact* at the nodes
+(super-convergence), so the error is effectively zero up to floating-point
+rounding.
+
+---
+
+## 5 · Visualise
+
+```{python}
+import matplotlib.pyplot as plt
+
+x_fine   = np.linspace(0, 1, 200)
+u_fine   = x_fine + 0.5 * (x_fine - x_fine**2)
+
+fig, ax = plt.subplots(figsize=(6, 3.5))
+ax.plot(x_fine, u_fine, "k-",  lw=1.5, label="Analytical")
+ax.plot(nodes,  u,      "ro--", lw=1,   label="FEM nodes")
+ax.set_xlabel("x")
+ax.set_ylabel("u(x)")
+ax.set_title("1-D Poisson – FEM vs Analytical")
+ax.legend()
+plt.tight_layout()
+plt.show()
+```
