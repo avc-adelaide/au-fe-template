@@ -37,4 +37,3 @@ uninstall:
 	rm -rf .pixi
 	rm -rf .venv
 	find . -type d -name "__pycache__" -exec rm -rf {} +
-

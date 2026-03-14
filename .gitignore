@@ -3,3 +3,4 @@
 !.pixi/config.toml
 *.egg-info
 results
+.DS_Store

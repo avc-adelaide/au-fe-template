@@ -14,11 +14,11 @@ curl -fsSL https://pixi.sh/install.sh | bash
 pixi init .
 ```
 
-3. Add fenicsx dependencies:
+3. Add fenicsx and other dependencies:
 ```
 pixi install
 ```
-These are defined in `pixi.toml`.
+These dependencies are defined in `pixi.toml`.
 
 4. There are two ways to execute using `pixi`. The first is to enter `pixi shell` and use standard CLI methods within it.
 The second approach, which is my preference, is to call `pixi run` as a prefix to the standard commands.
