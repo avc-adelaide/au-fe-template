@@ -4,10 +4,6 @@ on:
   push:
     branches:
       - main
-    paths:
-      - 'theory/**'
-      - 'quarto/**'
-      - '.github/workflows/build-and-deploy.yml'
   workflow_dispatch:
 
 # Minimum permissions for Pages deployment
