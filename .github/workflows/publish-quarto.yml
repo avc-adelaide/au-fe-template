@@ -1,12 +1,15 @@
 name: Publish Quarto Example and Theory Document
 
 on:
+  workflow_run:
+    workflows: ["Compile Theory Document"]
+    types:
+      - completed
   push:
     branches:
       - main
     paths:
       - 'quarto/**'
-      - 'theory/**'
       - '.github/workflows/publish-quarto.yml'
   workflow_dispatch:
 
@@ -15,6 +18,7 @@ permissions:
   contents: read
   pages: write
   id-token: write
+  actions: read
 
 # One deployment at a time; cancel in-progress runs if a new one starts
 concurrency:
@@ -25,6 +29,7 @@ jobs:
   build:
     name: Build site
     runs-on: macos-latest
+    if: ${{ github.event_name != 'workflow_run' || github.event.workflow_run.conclusion == 'success' }}
 
     steps:
       - name: Checkout repository
@@ -36,6 +41,8 @@ jobs:
         with:
           name: fenics_theory.pdf
           path: theory
+          run-id: ${{ github.event.workflow_run.id }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
 
       # ── Quarto document ───────────────────────────────────────────────────
 
